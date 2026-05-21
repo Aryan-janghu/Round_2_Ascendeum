@@ -1,0 +1,28 @@
+SELECT 
+    resource_id,
+    date,
+
+    MIN(
+        CASE 
+            WHEN is_clock_in = 1 THEN start_time
+        END
+    ) AS Clock_In_Time,
+
+    MAX(
+        CASE 
+            WHEN is_clock_out = 1 THEN end_time
+        END
+    ) AS Clock_Out_Time,
+
+    ROUND(
+        SUM(
+            (julianday(end_time) - julianday(start_time)) * 24
+        ),
+        2
+    ) AS total_work_hours
+
+FROM test_de
+
+WHERE end_time >= start_time
+
+GROUP BY resource_id, date;
